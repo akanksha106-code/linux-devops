@@ -1,0 +1,314 @@
+# Day 02 - Linux Commands & System Management
+
+## System Information Commands
+
+### Identifying Your Linux Distribution
+```bash
+# Display OS information including distribution name and version
+cat /etc/os-release
+
+# Alternative commands for system information
+lsb_release -a    # Detailed distribution information
+uname -a          # Kernel information
+hostnamectl       # System and OS information in one command
+```
+
+### Command Documentation
+```bash
+# Get detailed manual for any command
+man <CommandName>
+
+# Get a quick help/usage information
+<CommandName> --help
+
+# Find examples of command usage
+tldr <CommandName>    # If tldr is installed
+```
+
+### Finding Commands and Packages
+```bash
+# Find the location of a command binary
+which <CommandName>   # Shows the first matching executable in PATH
+
+# Find all related files (binary, source, manual) for a package
+whereis <PackageName>
+
+# Find a command even if it's not installed (requires mlocate package)
+locate <FileName>
+```
+
+## Terminal Basics
+
+### Understanding Prompt Symbols
+```
+$  → You are a normal user
+#  → You are the root user (superuser)
+~  → You are in your home directory (/home/username)
+```
+
+### Directory Navigation
+```bash
+# Navigate up one directory level
+cd ..
+
+# Navigate to your home directory
+cd    # or
+cd ~
+
+# Navigate to a specific absolute path
+cd /path/to/directory
+
+# Navigate to root directory
+cd /
+```
+
+### Path Types
+- **Absolute Path**: Starts from the root directory (/) and specifies the complete path
+  - Example: `/home/username/documents/file.txt`
+  
+- **Relative Path**: Starts from your current location
+  - Example: `../documents/file.txt` (go up one level, then into documents)
+
+## File Operations
+
+### Copying Files
+```bash
+# Basic copy
+cp <SourceFile> <DestinationFile>
+
+# Copy with options
+cp -r <SourceDirectory> <DestinationDirectory>    # Copy directory recursively
+cp -i <SourceFile> <DestinationFile>              # Interactive (asks before overwriting)
+cp -p <SourceFile> <DestinationFile>              # Preserve permissions and timestamps
+```
+
+### Moving and Renaming
+```bash
+# Move or rename files/directories
+mv <SourcePath> <DestinationPath>
+
+# Move with options
+mv -i <SourcePath> <DestinationPath>    # Interactive mode
+mv -n <SourcePath> <DestinationPath>    # No overwrite
+mv -v <SourcePath> <DestinationPath>    # Verbose (show what's happening)
+```
+
+## Command History Management
+
+```bash
+# View command history
+history
+
+# Clear history
+history -c
+
+# Search history (press Ctrl+R and type)
+# Press Ctrl+R again to cycle through matches
+
+# Run a specific command from history
+!<number>    # Example: !42 runs the 42nd command in history
+
+# Run the last command that started with 'string'
+!string
+```
+
+## System Utilities
+
+### Calculator
+```bash
+# Install calculator utility (if not already installed)
+sudo yum install bc -y    # For RHEL/CentOS/Amazon Linux
+sudo apt install bc -y    # For Ubuntu/Debian
+
+# Start the calculator
+bc
+
+# Set scale for decimal precision
+scale=2    # Sets 2 decimal places
+
+# Exit calculator
+quit    # or press Ctrl+D
+```
+
+### Hostname Management
+```bash
+# Display hostname
+hostname
+
+# Display hostname with IP address
+hostname -i
+
+# Set hostname (requires root privileges)
+sudo hostnamectl set-hostname <new-hostname>
+
+# View system uptime
+uptime
+```
+
+## Advanced Commands
+
+### Package Management
+
+#### For RHEL/CentOS/Amazon Linux
+```bash
+# List all available packages
+yum list available
+
+# List installed packages
+yum list installed
+
+# Search for a package
+yum search <keyword>
+
+# Install a package
+sudo yum install <package-name> -y
+
+# Remove a package
+sudo yum remove <package-name> -y
+```
+
+#### For Fedora/newer RHEL
+```bash
+# List installed packages
+dnf list installed
+
+# Install a package
+sudo dnf install <package-name>
+```
+
+### Directory and File Management
+```bash
+# Remove a non-empty directory (use with caution!)
+rm -rf <DirectoryName>
+
+# List files with different options
+ls -l     # Long format with details
+ls -lr    # Reverse order
+ls -la    # Show hidden files (starting with .)
+ls -lh    # Human-readable file sizes
+ls -lt    # Sort by modification time
+```
+
+### File Viewing and Manipulation
+```bash
+# View file contents
+cat <FileName>           # Display entire file
+tac <FileName>           # Display file in reverse order
+cat -n <FileName>        # Display with line numbers
+
+# View beginning of file
+head <FileName>          # First 10 lines
+head -n 20 <FileName>    # First 20 lines
+
+# View end of file
+tail <FileName>          # Last 10 lines
+tail -n 20 <FileName>    # Last 20 lines
+tail -f <FileName>       # Follow file updates in real-time
+```
+
+### Sorting and Filtering
+```bash
+# Sort file contents
+sort <FileName>                # Sort alphabetically
+sort -r <FileName>             # Sort in reverse
+sort -n <FileName>             # Sort numerically
+sort <FileName> | uniq         # Sort and remove duplicates
+sort -k2 <FileName>            # Sort by second column
+```
+
+### File Comparison
+```bash
+# Compare two files
+diff <File1> <File2>           # Show differences
+cmp <File1> <File2>            # Compare byte by byte
+comm <File1> <File2>           # Compare sorted files
+```
+
+### Finding Files
+```bash
+# Find files by name
+find / -name "<FileName>"                  # Search entire filesystem
+find /home -name "*.txt"                   # Search for all .txt files in /home
+find /var/log -type f -mtime -7            # Files modified in the last 7 days
+find /path -type f -size +10M              # Files larger than 10MB
+```
+
+## Vi/Vim Editor Commands
+
+### Navigation in Command Mode
+```
+h, j, k, l    → Move left, down, up, right
+w             → Move forward one word
+b             → Move backward one word
+0             → Move to beginning of line
+$             → Move to end of line
+gg            → Move to beginning of file
+G             → Move to end of file
+```
+
+### Editing Commands
+```
+i             → Insert mode (before cursor)
+a             → Insert mode (after cursor)
+Shift + i     → Insert at beginning of line
+Shift + a     → Insert at end of line
+Shift + o     → Insert new line above current line
+o             → Insert new line below current line
+```
+
+### Line Operations
+```
+yy            → Copy (yank) current line
+p             → Paste after cursor
+dd            → Delete current line
+u             → Undo last change
+Ctrl + r      → Redo last undone change
+```
+
+### File Operations
+```
+:w            → Save file
+:q            → Quit (fails if unsaved changes)
+:q!           → Quit without saving
+:wq           → Save and quit
+:set number   → Show line numbers
+:<number>     → Go to specific line number
+:%d           → Delete all lines in file
+```
+
+## Text Search with Grep
+
+```bash
+# Basic grep usage
+grep "pattern" <FileName>                  # Search for pattern in file
+grep -i "pattern" <FileName>               # Case-insensitive search
+grep -r "pattern" <Directory>              # Recursive search in directory
+grep -v "pattern" <FileName>               # Show lines NOT matching pattern
+grep -n "pattern" <FileName>               # Show line numbers
+grep -c "pattern" <FileName>               # Count matching lines
+grep -A 2 -B 2 "pattern" <FileName>        # Show 2 lines after and before match
+```
+
+## Linux Directory Structure
+
+```
+/           → Root directory (everything is under this)
+/bin        → Essential user command binaries
+/boot       → Boot loader files, kernel, initrd
+/dev        → Device files
+/etc        → System configuration files
+/home       → User home directories
+/lib        → Essential shared libraries
+/media      → Mount point for removable media
+/mnt        → Mount point for temporary filesystems
+/opt        → Optional application software packages
+/proc       → Virtual filesystem for process information
+/root       → Home directory for the root user
+/run        → Run-time variable data
+/sbin       → System binaries
+/srv        → Data for services provided by the system
+/sys        → Virtual filesystem for system information
+/tmp        → Temporary files
+/usr        → Secondary hierarchy (user programs, data)
+/var        → Variable data (logs, mail, etc.)
+```
