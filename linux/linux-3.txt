@@ -1,0 +1,296 @@
+# Day 03 - Linux Commands & Administration (Improved)
+
+---
+
+## Stream Editor (sed)
+
+The stream editor edits text based on patterns without opening an editor.
+
+```bash
+# Basic substitution (prints result to stdout)
+sed 's/old/new/' file.txt          # Replace first occurrence per line
+sed 's/old/new/g' file.txt         # Replace all occurrences per line
+
+# In-place edit (modify the file directly; consider making a backup)
+sed -i 's/old/new/g' file.txt      # On GNU sed
+sed -i.bak 's/old/new/g' file.txt  # Create file.txt.bak backup
+
+# Use regex capture groups
+sed -E 's/(foo)(bar)/\2\1/g' file.txt  # Swap groups
+
+# Delete lines that match a pattern
+grep -v 'pattern' file.txt             # Using grep
+sed -i '/pattern/d' file.txt           # Using sed (in-place)
+
+# Print only matching lines with context
+sed -n '/pattern/p' file.txt           # Only lines matching pattern
+sed -n '5,10p' file.txt                # Print a range of lines 5–10
+
+# Multiple expressions
+sed -e 's/apple/banana/g' -e 's/red/green/g' file.txt
+```
+
+Tips:
+- Use single quotes to avoid shell expansion.
+- Test without `-i` first to preview changes.
+
+---
+
+## Linux Directory Structure (Quick Reference)
+
+```
+/      → Root of the filesystem
+/bin   → Essential user binaries
+/etc   → System configuration
+/home  → User home directories
+/var   → Variable data (logs, spool)
+/usr   → User programs and data
+/tmp   → Temporary files
+/opt   → Optional third‑party software
+/sbin  → System binaries (admin)
+/proc  → Virtual FS for processes
+/sys   → Virtual FS for devices/system
+```
+
+---
+
+## File Permissions in Linux
+
+Each file/dir has permissions for three classes: user (owner), group, others.
+
+- **r**: read
+- **w**: write
+- **x**: execute (or enter directory)
+
+Long listing example:
+```
+-rw-r--r-- 1 user group 1042 May 10 12:00 report.txt
+| |  |  |                      └─ name
+| |  |  └─ group
+| |  └─ user (owner)
+| └─ permissions for u/g/o
+└─ type: - (file), d (directory), l (symlink), etc.
+```
+
+### Symbolic mode
+```bash
+chmod u+x script.sh          # Add execute for user
+chmod g-w file.txt           # Remove write from group
+chmod o=r file.txt           # Set others to read only
+chmod a+rx dir               # Add read/execute to all
+chmod -R u=rwX,go=rX dir/    # Recursive, X sets exec on dirs/exec files
+```
+
+### Numeric (octal) mode
+- 4: read, 2: write, 1: execute
+- Combine per class → `u g o`
+
+```bash
+chmod 644 file.txt   # u=rw-, g=r--, o=r--
+chmod 600 key.pem    # u=rw-, g=---, o=---
+chmod 755 script.sh  # u=rwx, g=rx,  o=rx
+```
+
+### Ownership
+```bash
+# Change owner and/or group
+chown user file
+chown user:group file
+chgrp group file
+
+# Recursive
+sudo chown -R nginx:nginx /var/www/site
+```
+
+---
+
+## Working with Users
+
+Common users on cloud images include `root` and `ec2-user` (Amazon Linux).
+
+```bash
+# Identify current user and groups
+whoami
+id
+
+# Create a user (distribution dependent)
+sudo useradd -m -s /bin/bash alice     # RHEL/CentOS/Amazon
+# or
+sudo adduser alice                      # Debian/Ubuntu interactive
+
+# Set/Change password
+sudo passwd alice
+
+# Add to a group (e.g., wheel or sudo for admin)
+sudo usermod -aG wheel alice            # RHEL/CentOS/Amazon
+sudo usermod -aG sudo alice             # Debian/Ubuntu
+
+# Lock/Unlock account
+sudo usermod -L alice   # lock
+sudo usermod -U alice   # unlock
+```
+
+Granting sudo safely:
+```bash
+sudo visudo               # Edit with syntax checks
+# Add a line like:
+alice ALL=(ALL) NOPASSWD:ALL   # or require password by omitting NOPASSWD
+```
+
+---
+
+## Package Managers
+
+- **RHEL/CentOS/Amazon Linux**: `yum` (or `dnf` on newer)
+- **Fedora/newer RHEL**: `dnf`
+- **Ubuntu/Debian**: `apt`
+
+```bash
+# RHEL/CentOS/Amazon
+sudo yum search httpd
+sudo yum install httpd -y
+sudo yum remove httpd -y
+
+# Fedora/new RHEL
+sudo dnf install httpd -y
+
+# Ubuntu/Debian
+sudo apt update
+sudo apt install apache2 -y
+sudo apt remove apache2 -y
+```
+
+---
+
+## Environment Variables
+
+```bash
+# Temporary (current shell)
+export NAME="kastro"
+export ROLE="MLOps"
+echo "$NAME"            # prints kastro
+printenv | grep ROLE
+unset NAME
+
+# Persistent for a user
+# Append to ~/.bashrc or ~/.bash_profile
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# System-wide (with caution)
+# /etc/environment (VAR=VALUE lines) or files in /etc/profile.d/*.sh
+```
+
+---
+
+## Enable Password-based SSH Authentication (if disabled)
+
+Warning: Prefer SSH keys. Use passwords only when required and ensure strong policies.
+
+```bash
+# 1) Set a password for the user
+sudo passwd alice
+
+# 2) Update sshd_config (if PasswordAuthentication is disabled)
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+sudo sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sudo sed -i 's/^#\?ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+sudo sed -i 's/^#\?UsePAM .*/UsePAM yes/' /etc/ssh/sshd_config
+
+# 3) Restart SSH service
+sudo systemctl restart sshd    # or: sudo service ssh restart (Ubuntu older)
+
+# 4) Test from a client
+ssh alice@server-ip
+```
+
+---
+
+## Managing Services with systemctl
+
+```bash
+# Start/Stop/Restart/Status
+sudo systemctl start httpd       # apache on RHEL/CentOS
+sudo systemctl stop httpd
+sudo systemctl restart httpd
+sudo systemctl status httpd
+
+# Enable at boot / Disable
+sudo systemctl enable httpd
+sudo systemctl disable httpd
+systemctl is-enabled httpd
+
+# View logs for a service
+journalctl -u httpd --since "1 hour ago"
+```
+
+---
+
+## Networking Commands
+
+```bash
+ping -c 4 example.com            # Check connectivity
+curl -I https://example.com      # HTTP headers
+curl -L https://example.com -o out.html
+wget https://example.com/file.tar.gz
+
+# Show IP info (modern distros)
+ip a                            # Better than ifconfig
+ip route                        # Routing table
+
+# Open ports / sockets
+ss -tulpen                      # Like netstat
+
+# DNS queries
+dig example.com +short          # From bind-utils / dnsutils
+nslookup example.com
+```
+
+---
+
+## Transferring Files
+
+### Windows ↔ Linux
+- WinSCP (GUI) for SFTP/SCP.
+- PuTTY PSCP (CLI):
+```powershell
+# From Windows PowerShell
+pscp.exe C:\path\localfile alice@server-ip:/home/alice/
+```
+
+### Linux ↔ Linux
+```bash
+# scp (simple copy over SSH)
+scp file.txt alice@server-ip:/home/alice/
+scp -r project/ alice@server-ip:/home/alice/project/
+scp alice@server-ip:/var/log/messages ./
+
+# rsync (efficient sync, resumes, excludes)
+rsync -avz --progress project/ alice@server-ip:/home/alice/project/
+rsync -avz -e ssh --delete project/ alice@server-ip:/home/alice/project/
+```
+
+---
+
+## Quick Cheats
+
+```bash
+# Show permissions in numeric form
+namei -m /path/to/file          # On util-linux; or use stat
+stat -c '%a %n' /path/to/file   # Prints octal perms and name
+
+# Find files by permission/type
+find /var/www -type f -perm 640
+
+# Recursive permission/ownership (use carefully!)
+sudo chmod -R u=rwX,go=rX /var/www/site
+sudo chown -R www-data:www-data /var/www/site  # Debian/Ubuntu example
+```
+
+---
+
+## Next Steps
+- Practice `sed` on sample logs and CSV files.
+- Harden SSH by re-enabling key-based auth and disabling passwords in production.
+- Use `systemctl enable` and `journalctl` to manage and debug services.
+- Prefer `rsync` for large file transfers and backups.
