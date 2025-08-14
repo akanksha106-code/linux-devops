@@ -287,10 +287,3 @@ sudo chmod -R u=rwX,go=rX /var/www/site
 sudo chown -R www-data:www-data /var/www/site  # Debian/Ubuntu example
 ```
 
----
-
-## Next Steps
-- Practice `sed` on sample logs and CSV files.
-- Harden SSH by re-enabling key-based auth and disabling passwords in production.
-- Use `systemctl enable` and `journalctl` to manage and debug services.
-- Prefer `rsync` for large file transfers and backups.
