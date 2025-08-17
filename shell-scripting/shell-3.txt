@@ -1,0 +1,106 @@
+Shell Scripting - 03
+------------------------------------------------------------
+
+Topic: Loops in Shell Scripting
+
+
+Introduction
+------------
+Loops in shell scripting allow you to execute a block of commands multiple times. 
+They are especially useful when you want to repeat tasks such as processing files, 
+checking system usage, or printing data.
+
+
+What is a Loop?
+---------------
+A loop is a programming construct that repeats a set of commands until a condition is met.
+
+Types of Loops:
+1. Range-Based Loop
+   - Used when the number of iterations is known in advance.
+   - Example: for loop
+
+2. Conditional-Based Loop
+   - Used when the number of iterations is not known.
+   - Executes until the condition becomes false.
+   - Example: while loop
+
+
+FOR Loop
+--------
+Syntax:
+    for (( initialization; condition; modification ))
+    do
+        <statements>
+    done
+
+Example:
+    for (( i=1; i<=5; i++ ))
+    do
+        echo "Iteration $i"
+    done
+
+
+WHILE Loop
+----------
+Syntax:
+    while [ condition ]
+    do
+        <statements>
+    done
+
+Example:
+    count=1
+    while [ $count -le 5 ]
+    do
+        echo "Iteration $count"
+        ((count++))
+    done
+
+
+Assignments
+-----------
+
+Task 1: For Loop
+----------------
+Create a shell script to print all .py, .java, and .txt files from a custom directory.
+
+#!/bin/bash
+# list_files.sh
+
+DIRECTORY="/path/to/custom"
+
+for file in $DIRECTORY/*.{py,java,txt}
+do
+    if [ -e "$file" ]; then
+        echo "File found: $file"
+    fi
+done
+
+
+Task 2: For Loop
+----------------
+Write a shell script to print even numbers from 2 to 20.
+
+#!/bin/bash
+# even_numbers.sh
+
+for (( i=2; i<=20; i+=2 ))
+do
+    echo "Even Number: $i"
+done
+
+
+Task 3: While Loop
+------------------
+Write a shell script to monitor CPU usage in real-time.
+
+#!/bin/bash
+# cpu_monitor.sh
+
+while true
+do
+    echo "Current CPU Usage:"
+    top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4"%"}'
+    sleep 2
+done

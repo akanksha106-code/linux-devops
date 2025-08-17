@@ -1,0 +1,154 @@
+Shell Scripting - 04
+------------------------------------------------------------
+
+Topic: Conditional Statements, Command Line Arguments & Functions
+
+
+1. Conditional Statements
+-------------------------
+Conditional Statements (CS) allow you to execute specific blocks of code 
+based on whether a condition is true or false.
+
+Types of Conditional Statements:
+1. if statement
+   - Executes a block of code if a condition is true.
+
+2. if-else statement
+   - Executes one block if the condition is true, otherwise executes another.
+
+3. if-elif-else statement
+   - Checks multiple conditions and executes the corresponding block.
+
+Syntax:
+    if [ condition ]; then
+        # commands if true
+    elif [ condition ]; then
+        # commands if true
+    else
+        # commands if all conditions false
+    fi
+
+Example: Check if a file exists
+--------------------------------
+#!/bin/bash
+FILE="/path/to/file"
+
+if [ -f "$FILE" ]; then
+    echo "File exists: $FILE"
+else
+    echo "File does not exist: $FILE"
+fi
+
+
+2. Command Line Arguments
+-------------------------
+Command Line Arguments (CLA) are inputs passed to a script when executed.
+They make scripts dynamic and reusable.
+
+Special Variables:
+- $0 : Script name
+- $1, $2, $3... : First, second, third arguments
+- $# : Total number of arguments (excluding script name)
+- $@ : All arguments (each treated as separate quoted string)
+- $* : All arguments (treated as one string)
+
+Difference between $@ and $*:
+- $@ preserves arguments separately, even with spaces.
+- $* merges all arguments into a single string.
+
+Example: Print arguments
+-------------------------
+#!/bin/bash
+echo "Script Name: $0"
+echo "First Argument: $1"
+echo "Second Argument: $2"
+echo "All Arguments (\$@): $@"
+echo "All Arguments (\$*): $*"
+echo "Total Arguments: $#"
+
+
+3. Functions
+------------
+Functions are reusable blocks of code that perform a specific task. 
+They help organize code, avoid repetition, and make scripts modular.
+
+Syntax:
+    function_name () {
+        # commands
+    }
+
+Calling a function:
+    function_name
+
+Example: Calculator functions
+------------------------------
+#!/bin/bash
+
+add () {
+    echo "Addition: $(($1 + $2))"
+}
+
+subtract () {
+    echo "Subtraction: $(($1 - $2))"
+}
+
+multiply () {
+    echo "Multiplication: $(($1 * $2))"
+}
+
+# Calling functions
+add 10 5
+subtract 10 5
+multiply 10 5
+
+
+Assignments
+-----------
+
+1. Conditional Statements
+Write a script that takes a number as input and checks if it is even or odd.
+
+#!/bin/bash
+read -p "Enter a number: " num
+if (( $num % 2 == 0 )); then
+    echo "$num is Even"
+else
+    echo "$num is Odd"
+fi
+
+
+2. Command Line Arguments
+Write a script that takes three numbers as CLA and displays the largest.
+
+#!/bin/bash
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 num1 num2 num3"
+    exit 1
+fi
+
+if [ $1 -ge $2 ] && [ $1 -ge $3 ]; then
+    echo "Largest number is: $1"
+elif [ $2 -ge $1 ] && [ $2 -ge $3 ]; then
+    echo "Largest number is: $2"
+else
+    echo "Largest number is: $3"
+fi
+
+
+3. Functions
+Write a script to calculate factorial using a function.
+
+#!/bin/bash
+
+factorial () {
+    num=$1
+    fact=1
+    for (( i=1; i<=num; i++ ))
+    do
+        fact=$((fact * i))
+    done
+    echo "Factorial of $num is: $fact"
+}
+
+read -p "Enter a number: " n
+factorial $n
