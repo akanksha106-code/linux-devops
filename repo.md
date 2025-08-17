@@ -1,7 +1,4 @@
----
-description: Repository Information Overview
-alwaysApply: true
----
+
 
 # Linux Learning Repository Information
 
