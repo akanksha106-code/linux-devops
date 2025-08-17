@@ -1,0 +1,161 @@
+# Shell Scripting - 02
+
+------------------------------------------------------------
+1. VARIABLES
+------------------------------------------------------------
+
+A variable is used to store data in key-value format.
+
+Example:
+    Name=Kastro
+    Age=30
+    Gender=Male
+
+- Variables act as placeholders for values.
+- No data type declarations are required.
+- Access a variable with $:
+    echo $Name
+
+
+Types of Variables:
+-------------------
+
+1. System (Environment) Variables  
+   - Predefined by the system.  
+   - Examples: $USER, $HOME, $PATH  
+   - View all: env  
+
+2. User-defined Variables  
+   - Created by the user as required.  
+   - Example: course="DevOps"
+
+Temporary Variables:
+- Created using export. Lost after session ends.
+  export project=AWS
+
+Permanent Variables:
+- Defined in ~/.bashrc or ~/.bash_profile
+  echo "export project=AWS" >> ~/.bashrc
+  source ~/.bashrc
+
+Remove a variable:
+  unset project
+
+Rules:
+- Cannot start with a digit.
+- Cannot contain -, @, #.
+- Convention: UPPERCASE for system variables, lowercase for user-defined.
+
+
+Common Issues:
+- Wrong: name = Kastro   (spaces not allowed)
+- Correct: name=Kastro
+- If variable not accessible in sub-shell → use export.
+
+
+------------------------------------------------------------
+2. OPERATORS
+------------------------------------------------------------
+
+Operators are used to perform calculations or comparisons.
+
+2.1 Arithmetic Operators
+-------------------------
++  -  *  /  %
+
+Syntax:
+  echo $((expression))
+
+Example:
+  echo $((100 + 300))   # Output: 400
+
+
+2.2 Relational (Comparison) Operators
+--------------------------------------
+== or -eq : equal to
+!= or -ne : not equal to
+>  or -gt : greater than
+<  or -lt : less than
+>= or -ge : greater than or equal
+<= or -le : less than or equal
+
+Example:
+  a=20
+  b=15
+  if [ $a -gt $b ]; then
+      echo "a is greater than b"
+  else
+      echo "a is not greater than b"
+  fi
+
+Note: Always put spaces inside [ ] → [ $a -gt $b ]
+
+
+------------------------------------------------------------
+3. CONDITIONAL STATEMENTS
+------------------------------------------------------------
+
+Syntax:
+if [ condition ]; then
+   # statements
+elif [ condition ]; then
+   # statements
+else
+   # statements
+fi
+
+
+Example: Grade Evaluation
+marks=85
+if [ $marks -ge 90 ]; then
+    echo "Grade A"
+elif [ $marks -ge 80 ]; then
+    echo "Grade B"
+elif [ $marks -ge 70 ]; then
+    echo "Grade C"
+elif [ $marks -ge 60 ]; then
+    echo "Grade D"
+else
+    echo "Grade E"
+fi
+
+
+------------------------------------------------------------
+4. ASSIGNMENTS
+------------------------------------------------------------
+
+Task 1:
+Write a shell file to check whether a file is available or not in a specific path.
+
+Solution:
+#!/bin/bash
+file="/home/ec2-user/test.txt"
+
+if [ -e "$file" ]; then
+    echo "The file $(basename $file) is available in $(dirname $file)"
+else
+    echo "The file $(basename $file) is NOT available in $(dirname $file)"
+fi
+
+Notes:
+- Use -e to check existence.
+- Avoid mistake: [ $file ] only checks if variable is non-empty.
+
+
+Task 2:
+Write a shell file to check if a given path is a directory or a normal file.
+
+Solution:
+#!/bin/bash
+path="/home/ec2-user/Kastro"
+
+if [ -f "$path" ]; then
+    echo "The $(basename $path) is a Normal File"
+elif [ -d "$path" ]; then
+    echo "The $(basename $path) is a Directory"
+else
+    echo "The $(basename $path) does not exist"
+fi
+
+Notes:
+- Always wrap variables in quotes "$path" to avoid issues with spaces.
