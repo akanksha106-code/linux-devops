@@ -1,0 +1,226 @@
+
+
+# Shell Scripting for DevOps Engineers – Detailed Notes
+
+---
+
+## 1. Linux Architecture
+
+Linux has 4 main layers:
+
+1. **Hardware** – Physical components like CPU, memory, and I/O devices.
+2. **Kernel** – Core of Linux; manages CPU, memory, devices, and system calls.
+3. **Shell** – Command interpreter; takes user commands and passes them to the kernel.
+4. **Application Layer** – Programs and utilities like editors, browsers, and monitoring tools.
+
+---
+
+## 2. Shell Processing
+
+The shell is the interface between the user and the kernel.
+
+* User types a command → shell interprets it → kernel executes it → result is returned.
+* Commands can be run **interactively** (typed in terminal) or **through scripts**.
+
+---
+
+## 3. What is Scripting?
+
+Scripting is the process of storing a series of Linux commands in a file so they can be executed together.
+Instead of typing the same commands repeatedly, we can **automate** them using scripts.
+
+---
+
+## 4. Why Scripting?
+
+* **Automation**: Automates repetitive tasks like backups or deployments.
+* **Efficiency**: Saves time and reduces human error.
+* **Consistency**: Ensures the same procedure every time.
+* **Monitoring & Maintenance**: Helps in health checks, log monitoring, and cleanups.
+
+---
+
+## 5. Real-world Scenarios
+
+* Backup automation using cron jobs.
+* Log analysis for errors or warnings.
+* System health checks (CPU, RAM, disk).
+* Deployment automation in CI/CD pipelines.
+
+---
+
+## 6. Shell Scripting Basics
+
+* Written using interpreters like **Bash**.
+* Files usually have `.sh` extension (e.g., `backup.sh`).
+* Example commands that can be stored in a script:
+
+```bash
+whoami
+pwd
+date
+cal 2025
+ls -l
+```
+
+---
+
+## 7. Shebang (`#!`)
+
+The first line of a script tells Linux which interpreter to use.
+
+```bash
+#!/bin/bash
+```
+
+Not mandatory, but highly recommended for clarity and avoiding execution errors.
+
+---
+
+## 8. Types of Shells
+
+* Bash (Bourne Again Shell) – most common.
+* sh (Bourne Shell).
+* Zsh (Z Shell).
+* Ksh (Korn Shell).
+* Csh (C Shell).
+
+Amazon Linux and Ubuntu generally default to **Bash**.
+
+---
+
+## 9. Connecting to EC2 Instances
+
+You can use **MobaXTerm**, **Git Bash**, or **SSH** to connect to EC2.
+Once inside the terminal, you can create scripts, edit them with `vi` or `nano`, and execute them.
+
+---
+
+## 10. Script 1: Welcome Message
+
+```bash
+#!/bin/bash
+echo "Enter Your Name: "
+read user_name
+echo "Hello $user_name, Welcome to Shell Scripting!"
+```
+
+### Execution Methods:
+
+1. Make it executable:
+
+   ```bash
+   chmod +x welcome.sh
+   ./welcome.sh
+   ```
+2. Run directly:
+
+   ```bash
+   sh welcome.sh
+   bash welcome.sh
+   ```
+
+**Issue Faced**: If you forget `chmod +x`, you may see `Permission denied`.
+**Fix**: Always run `chmod +x script.sh` before execution.
+
+---
+
+## 11. Script 2: Linux Commands
+
+```bash
+#!/bin/bash
+echo "Executing simple Linux commands"
+whoami
+pwd
+date
+cal 2025
+mkdir Kastro
+touch Kastro.txt
+```
+
+**Issue Faced**: If the directory `Kastro` already exists, the script throws:
+`mkdir: cannot create directory ‘Kastro’: File exists`.
+**Fix**: Use the safe option:
+
+```bash
+mkdir -p Kastro
+```
+
+---
+
+## 12. Script 3: System Details
+
+```bash
+#!/bin/bash
+echo "Display basic system information"
+echo "Current User: $(whoami)"
+echo "Current Directory: $(pwd)"
+echo "Today's Date: $(date)"
+echo "Calendar: $(cal)"
+```
+
+**Issue Faced**: On some minimal Linux distributions, `cal` may not be installed and shows:
+`command not found: cal`.
+**Fix**: Install it using:
+
+* For Ubuntu/Debian: `sudo apt install ncal -y`
+* For RHEL/Amazon Linux: `sudo yum install util-linux -y`
+
+---
+
+## 13. Assignments
+
+### Task 1: System Information Script
+
+```bash
+#!/bin/bash
+echo "System Information"
+echo "Current User: $(whoami)"
+echo "Current Directory: $(pwd)"
+echo "Today's Date: $(date '+%A, %B %d, %Y')"
+echo "System Uptime: $(uptime -p)"
+```
+
+**Error Handling**: If `uptime` is missing, install `procps` package.
+
+---
+
+### Task 2: Interactive Script
+
+```bash
+#!/bin/bash
+echo "Enter your Name: "
+read name
+echo "Enter your Favorite Place: "
+read place
+echo "Hello $name, your favorite place is $place!"
+```
+
+This works in all environments. Just ensure you don’t press *Enter* without entering a value, or else it will print empty strings.
+
+---
+
+## 14. Common Errors in Shell Scripting
+
+1. **Permission Denied**
+   Happens when execution permission is missing.
+   Fix → Run `chmod +x script.sh`.
+
+2. **Bad Interpreter Error**
+   Example: `bad interpreter: No such file or directory`.
+   Happens if the shebang path is incorrect.
+   Fix → Always use `#!/bin/bash` (check with `which bash`).
+
+3. **Command Not Found**
+   Happens if a command used in the script is not installed.
+   Fix → Install missing package (e.g., `sudo apt install <pkg>`).
+
+4. **Variables Breaking the Script**
+   Example: `echo Hello $name` prints wrong output if `$name` has spaces.
+   Fix → Always wrap variables in quotes:
+
+   ```bash
+   echo "Hello $name"
+   ```
+
+
