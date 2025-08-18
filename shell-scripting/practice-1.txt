@@ -1,0 +1,37 @@
+1. System Health Monitoring Script
+
+Monitors CPU, Memory, and Disk Usage, and sends alerts if thresholds are crossed.
+
+#!/bin/bash
+
+CPU_THRESHOLD=80
+MEM_THRESHOLD=80
+DISK_THRESHOLD=90
+
+echo "Checking System Health..."
+
+# Get CPU Usage
+CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}')
+CPU_INT=${CPU_USAGE%.*}
+
+# Get Memory Usage
+MEM_USAGE=$(free | grep Mem | awk '{print $3/$2 * 100.0}')
+MEM_INT=${MEM_USAGE%.*}
+
+# Get Disk Usage
+DISK_USAGE=$(df -h / | awk 'NR==2 {print $5}' | sed 's/%//')
+
+# Check alerts
+if [ "$CPU_INT" -ge "$CPU_THRESHOLD" ]; then
+    echo "⚠️ CPU Usage High: $CPU_INT% | Threshold: $CPU_THRESHOLD%"
+fi
+
+if [ "$MEM_INT" -ge "$MEM_THRESHOLD" ]; then
+    echo "⚠️ Memory Usage High: $MEM_INT% | Threshold: $MEM_THRESHOLD%"
+fi
+
+if [ "$DISK_USAGE" -ge "$DISK_THRESHOLD" ]; then
+    echo "⚠️ Disk Usage High: $DISK_USAGE% | Threshold: $DISK_THRESHOLD%"
+fi
+
+echo "✅ System Health Check Completed."
