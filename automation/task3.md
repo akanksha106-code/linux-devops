@@ -1,4 +1,4 @@
-Task 3: Environment Setup — JDK Installation
+# Task 3: Environment Setup — JDK Installation
 
 Problem: Many applications require Java. Without setting JAVA_HOME, build tools like Maven won’t work properly.
 
