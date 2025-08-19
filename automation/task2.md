@@ -1,4 +1,4 @@
-Task 2: File & Directory Permissions
+# Task 2: File & Directory Permissions
 
 Problem: On shared servers, we need to ensure files and directories are owned and accessible only by intended users or groups.
 
