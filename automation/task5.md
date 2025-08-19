@@ -1,4 +1,4 @@
-Task 5: Automation with Shell Scripting
+# Task 5: Automation with Shell Scripting
 
 Problem: Manually installing dependencies wastes time and creates inconsistency.
 Solution: Automated installation of Git, JDK, and Maven.
